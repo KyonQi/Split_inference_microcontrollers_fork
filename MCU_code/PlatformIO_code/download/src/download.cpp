@@ -1,6 +1,6 @@
 // Download weights application, sets up the file system and provides the user a menu that allows interaction with the filesystem and MCU, to download,\
 // erase and view the stored files.
-
+#include <Arduino.h>
 #include "worker_struct.h"
 #include "filesys.h"
 #include "menu.h"

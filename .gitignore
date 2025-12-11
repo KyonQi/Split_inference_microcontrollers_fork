@@ -14,6 +14,7 @@ pc_code/Algorithms/test_references/141.txt
 MCU_code/PlatformIO_code/full-pio.code-workspace
 MCU_code/PlatformIO_code/.vscode/c_cpp_properties.json
 MCU_code/PlatformIO_code/download/.vscode/c_cpp_properties.json
+MCU_code/PlatformIO_code/download/.cache
 MCU_code/PlatformIO_code/shared/.vscode/c_cpp_properties.json
 MCU_code/PlatformIO_code/download/.gitignore
 MCU_code/PlatformIO_code/worker_code/.gitignore

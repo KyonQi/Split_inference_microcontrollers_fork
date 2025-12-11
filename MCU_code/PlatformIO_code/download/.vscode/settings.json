@@ -2,5 +2,10 @@
     "files.associations": {
         "cstddef": "cpp",
         "functional": "cpp"
-    }
+    },
+    "clangd.arguments": [
+        "--compile-commands-dir=../compile_commands.json",
+        "--query-driver=/home/kyonqi/.platformio/packages/toolchain-gccarmnoneeabi-teensy/bin/arm-none-eabi-g++"
+    ]
+
 }
