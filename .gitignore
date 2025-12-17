@@ -18,6 +18,7 @@ MCU_code/PlatformIO_code/download/.cache
 MCU_code/PlatformIO_code/shared/.vscode/c_cpp_properties.json
 MCU_code/PlatformIO_code/download/.gitignore
 MCU_code/PlatformIO_code/worker_code/.gitignore
+MCU_code/inference_results_mcu.txt
 pc_code/Simulation/Simu_q/res_len_0.txt
 pc_code/Simulation/Simu_q/res_len_1.txt
 pc_code/Simulation/Simu_q/res_len_2.txt
