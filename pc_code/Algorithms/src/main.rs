@@ -36,7 +36,8 @@ mod tests {
     #[test]
     fn test_convolution() {
         //weight data
-        let file = File::open("pc_code/Algorithms/json_files/test_convolution.json").expect("Failed to open file");
+        let file = File::open("pc_code/Algorithms/json_files/test_convolution.json")
+            .expect("Failed to open file");
         let result = decode::decode_json(file);
         let r = result.get(&1).expect("failed");
         let output_shape = r.get_output_shape();
@@ -88,7 +89,8 @@ mod tests {
     }
     #[test]
     fn test_linear() {
-        let file = File::open("pc_code/Algorithms/json_files/test_linear.json").expect("Failed to open file");
+        let file = File::open("pc_code/Algorithms/json_files/test_linear.json")
+            .expect("Failed to open file");
         let result = decode::decode_json(file);
         let r = result.get(&141).expect("failed");
         let output_shape = r.get_output_shape();
@@ -134,7 +136,8 @@ mod tests {
     #[test]
     fn test_conv_norm_relu() {
         //weight data
-        let file = File::open("pc_code/Algorithms/json_files/test_cbr.json").expect("Failed to open file");
+        let file =
+            File::open("pc_code/Algorithms/json_files/test_cbr.json").expect("Failed to open file");
         let layers = decode::decode_json(file);
         //input
         let width = 44;
@@ -150,7 +153,8 @@ mod tests {
         }
 
         //reference output
-        let file = File::open("pc_code/Algorithms/test_references/cbr_reference_out.txt").expect("f");
+        let file =
+            File::open("pc_code/Algorithms/test_references/cbr_reference_out.txt").expect("f");
         let reader = BufReader::new(file);
         let mut reference: Vec<f32> = Vec::new();
         for line in reader.lines() {
@@ -242,7 +246,8 @@ mod tests {
 
         //weight data
         let mut start_time = Instant::now();
-        let file = File::open("pc_code/Algorithms/json_files/test_residual.json").expect("Failed to open file");
+        let file = File::open("pc_code/Algorithms/json_files/test_residual.json")
+            .expect("Failed to open file");
         let layers = decode::decode_json(file);
         let mut end_time = Instant::now();
         let mut elapsed_time = end_time - start_time;
@@ -264,7 +269,8 @@ mod tests {
         }
 
         //reference output
-        let file = File::open("pc_code/Algorithms/test_references/residual_reference_out_new.txt").expect("f");
+        let file = File::open("pc_code/Algorithms/test_references/residual_reference_out_new.txt")
+            .expect("f");
         let reader = BufReader::new(file);
         let mut reference: Vec<f32> = Vec::new();
         for line in reader.lines() {
@@ -373,7 +379,8 @@ mod tests {
     }
     #[test]
     fn test_weight_distribution_single_convolution() {
-        let file = File::open("pc_code/Algorithms/json_files/test_convolution.json").expect("Failed to open file");
+        let file = File::open("pc_code/Algorithms/json_files/test_convolution.json")
+            .expect("Failed to open file");
         let result = decode::decode_json(file);
         let layer = result.get(&1).expect("failed");
         let _output_shape = layer.get_output_shape();
@@ -395,8 +402,14 @@ mod tests {
         let _temp = layer.get_info();
         let input_shape: Vec<usize> = vec![3, 44, 44];
         let total_cpu_count = 8; //1-15 because of u16 coding for mapping
-        let weight = operations::distribute_weight(layer, total_cpu_count,vec![1,1,1,1,1,1,1,1]);
-        let mapping = operations::get_input_mapping(layer, total_cpu_count, input_shape,vec![1,1,1,1,1,1,1,1]);
+        let weight =
+            operations::distribute_weight(layer, total_cpu_count, vec![1, 1, 1, 1, 1, 1, 1, 1]);
+        let mapping = operations::get_input_mapping(
+            layer,
+            total_cpu_count,
+            input_shape,
+            vec![1, 1, 1, 1, 1, 1, 1, 1],
+        );
         let inputs_distribution = operations::distribute_input(input, mapping, total_cpu_count);
         let output_shape = layer.get_output_shape();
         let mut output = vec![
@@ -520,7 +533,7 @@ mod tests {
         let mut maximum_mapping_size = 0;
         let mut total_weight_size = 0;
         let mut maximum_worker_ram_usage = 0;
-        for i in 1..=layers.len(){
+        for i in 1..=layers.len() {
             let layer = layers.get(&(i as i32)).expect("getting layer failed");
             let output_shape = layer.get_output_shape();
             let _output = vec![
@@ -531,11 +544,16 @@ mod tests {
             match layer.identify() {
                 "Convolution" | "Linear" => {
                     let total_cpu_count = 3; //1-127
-                    let protions = vec![1;total_cpu_count as usize];
+                    let protions = vec![1; total_cpu_count as usize];
                     // let protions = vec![1,66,42,255,100,50,88,99];
-                    let weight = operations::distribute_weight(layer, total_cpu_count,protions.clone());
-                    let mapping =
-                        operations::get_input_mapping(layer, total_cpu_count, input_shape.clone(),protions.clone());
+                    let weight =
+                        operations::distribute_weight(layer, total_cpu_count, protions.clone());
+                    let mapping = operations::get_input_mapping(
+                        layer,
+                        total_cpu_count,
+                        input_shape.clone(),
+                        protions.clone(),
+                    );
                     let e_pos = mark_end(&mapping, total_cpu_count);
                     let test = operations::analyse_mapping(
                         mapping.clone(),
@@ -605,8 +623,8 @@ mod tests {
                             inputs_distribution[i].clone(),
                             weight[i].clone(),
                         );
-                        if(i == 0){
-                            println!("result len:{:?}",result.len());
+                        if (i == 0) {
+                            println!("result len:{:?}", result.len());
                         }
                         output_buffer.append(&mut result);
                     }

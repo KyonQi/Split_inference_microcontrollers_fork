@@ -2,17 +2,17 @@ use crate::nodes::{Coordinator, Message, Worker};
 use crate::util::{
     decode_coordinator, decode_worker, flatten_3d_array, generate_test_input, test_equal,
 };
+use algo::operations::find_which_cpu;
 use algo::util::{pre_processing, read_and_store_image};
 use algo::{QuantizedMapping, QuantizedWeightUnit};
 use chrono::prelude::*;
+use chrono::{Duration, TimeDelta};
 use core::num;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 use std::time::Instant;
-use chrono::{Duration, TimeDelta};
-use algo::operations::find_which_cpu;
 
 pub fn preparation_phase() {
     todo!()
@@ -136,8 +136,10 @@ pub fn c_1_simulation(num_workers: u8, end: usize) {
     //intput
     let image = pre_processing(read_and_store_image("pc_code/Algorithms/images/img.png").unwrap());
     let input = flatten_3d_array(image);
-    for i in 0..input.len(){
-        coordinator_sender.send(Message::Result(Some(input[i]))).expect("start failed");
+    for i in 0..input.len() {
+        coordinator_sender
+            .send(Message::Result(Some(input[i])))
+            .expect("start failed");
     }
     // for i in 0..num_workers {
     //     let coordinator_sender_clone = coordinator_sender.clone();
@@ -180,8 +182,16 @@ pub fn c_1_simulation_quant(num_workers: u8, end: usize) {
         let (worker_sender, worker_receiver) = mpsc::channel::<Message<u8>>();
         let coordinator_sender_clone = coordinator_sender.clone();
         let file_name = format!("pc_code/Simulation/Simu_q/worker_{:?}.json", worker_id);
-        let mut res_file = File::create(format!("pc_code/Simulation/Simu_q/res_len_{}.txt",worker_id)).unwrap();
-        let mut in_file = File::create(format!("pc_code/Simulation/Simu_q/input_len_{}.txt",worker_id)).unwrap();
+        let mut res_file = File::create(format!(
+            "pc_code/Simulation/Simu_q/res_len_{}.txt",
+            worker_id
+        ))
+        .unwrap();
+        let mut in_file = File::create(format!(
+            "pc_code/Simulation/Simu_q/input_len_{}.txt",
+            worker_id
+        ))
+        .unwrap();
         let handle = thread::spawn(move || {
             let mut phase = 0;
             let mut buffer = Vec::new();
@@ -210,7 +220,14 @@ pub fn c_1_simulation_quant(num_workers: u8, end: usize) {
                 if phase == 52 {
                     worker.adaptive_pooling_q();
                 }
-                buffer = worker.work_q(&coordinator_sender_clone, &worker_receiver, worker_id,&mut calc_duration, &mut in_file, &mut res_file); //buffer is the data received while working
+                buffer = worker.work_q(
+                    &coordinator_sender_clone,
+                    &worker_receiver,
+                    worker_id,
+                    &mut calc_duration,
+                    &mut in_file,
+                    &mut res_file,
+                ); //buffer is the data received while working
                 phase += 1;
             }
             println!("worker{:?}, exited", worker_id);
@@ -238,8 +255,8 @@ pub fn c_1_simulation_quant(num_workers: u8, end: usize) {
                     &worker_send_channel,
                     num_workers,
                 );
-                for i in 100000..130000{
-                    print!("{}",result_vec[i]);
+                for i in 100000..130000 {
+                    print!("{}", result_vec[i]);
                     print!(" ");
                 }
                 // test_equal(result_vec);
@@ -297,8 +314,10 @@ pub fn c_1_simulation_quant(num_workers: u8, end: usize) {
         .into_iter()
         .map(|x| (x / 0.017818455 + 114.38545).round().clamp(0., 255.) as u8)
         .collect::<Vec<u8>>(); //input quantization
-    for i in 0..input.len(){
-        coordinator_sender.send(Message::Result(Some(input[i]))).expect("start failed");
+    for i in 0..input.len() {
+        coordinator_sender
+            .send(Message::Result(Some(input[i])))
+            .expect("start failed");
     }
     // 等待所有Worker线程完成
     for handle in handles {

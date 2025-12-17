@@ -31,24 +31,24 @@ esac
 echo "configuring Teensy 4.1 as $mcu_role $mcu_id"
 
 cd ./MCU_code/PlatformIO_code/download
-pio run --target upload
+~/.platformio/penv/bin/pio run --target upload
 echo "Waiting for COM connection"
 sleep 5 
 wait
 
 echo "Download coordinator weights..."
 cd ../../
-python ./write_into_mcus.py /dev/ttyACM0 c
+python3 ./write_into_mcus_prog.py /dev/ttyACM0 c $mcu_id
 echo "Logging..."
 sleep 10
 echo "Download worker weights..."
-python ./write_into_mcus.py /dev/ttyACM0 w
+python3 ./write_into_mcus_prog.py /dev/ttyACM0 w $mcu_id
 echo "Logging..."
-sleep 30
+sleep 10
 
 echo "Flashing worker code"
 cd ./PlatformIO_code/worker_code
-pio run -e teensy41_autoconf --target upload
+~/.platformio/penv/bin/pio run -e teensy41_autoconf --target upload
 sleep 5 &
 wait
 

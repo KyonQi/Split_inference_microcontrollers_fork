@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "read.h"
 #include "calculation.h"
 #include "communication.h"
@@ -149,7 +150,7 @@ void setup() {
                 to_send[send_count + RESERVED_BYTES] = mapping.zero_point[0];
                 send_count += 1;
                 if(send_count == MESSAGE_SIZE - RESERVED_BYTES){
-                  write_length(to_send,send_count);
+                  write_length((byte *) to_send,send_count);
                   sendtoMCUs(to_send,mcu_mapped,MCU_ID,input_distribution,rec_count,send_count);
                   send_count = 0;
                 }
@@ -161,7 +162,7 @@ void setup() {
                   to_send[send_count + RESERVED_BYTES] = read_byte(count);
                   send_count += 1;
                   if(send_count == MESSAGE_SIZE - RESERVED_BYTES){
-                    write_length(to_send,send_count);
+                    write_length((byte *) to_send,send_count);
                     sendtoMCUs(to_send,mcu_mapped,MCU_ID,input_distribution,rec_count,send_count);
                     send_count = 0;
                   }
@@ -169,7 +170,7 @@ void setup() {
                   to_send[send_count + RESERVED_BYTES] = result[core_count];
                   send_count += 1;
                   if(send_count == MESSAGE_SIZE - RESERVED_BYTES){
-                    write_length(to_send,send_count);
+                    write_length((byte *) to_send,send_count);
                     sendtoMCUs(to_send,mcu_mapped,MCU_ID,input_distribution,rec_count,send_count);
                     send_count = 0;
                   }
@@ -189,7 +190,7 @@ void setup() {
             }
             //send the rest of the data
             if(send_count != 0 ){
-              write_length(to_send,send_count);
+              write_length((byte *) to_send,send_count);
               sendtoMCUs(to_send,mcu_mapped,MCU_ID,input_distribution,rec_count,send_count);
               send_count = 0;
             }
@@ -213,13 +214,13 @@ void setup() {
             to_send[RESERVED_BYTES + send_count] = result[i];
             send_count += 1;
             if(send_count == MESSAGE_SIZE - RESERVED_BYTES){
-              write_length(to_send,send_count);
+              write_length((byte *) to_send,send_count);
               send_message_to_coordinator(to_send);
               send_count = 0;
             }
           }
           if(send_count != 0){
-            write_length(to_send,send_count);
+            write_length((byte *) to_send,send_count);
             send_message_to_coordinator(to_send);
             send_count = 0; 
           }
@@ -272,7 +273,7 @@ void setup() {
         }
         results[0] = MCU_ID;
         results[1] = Inference_Results;
-        write_length(results, res_count);
+        write_length((byte *) results, res_count);
         client.write(results, MESSAGE_SIZE);
         #ifdef PROFILING
         ram_usage_by_layer[j] = 524288 - ((char*)&_heap_end - __brkval);

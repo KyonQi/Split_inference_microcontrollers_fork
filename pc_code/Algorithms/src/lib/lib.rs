@@ -92,7 +92,7 @@ pub trait Layer {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Conv {
-    pub w: Vec<Vec<Vec<Vec<f32>>>>,
+    pub w: Vec<Vec<Vec<Vec<f32>>>>, // a filter shape is like [out, in, height, width]
     pub info: ConvMapping,
     pub bias: Vec<f32>,
 }
